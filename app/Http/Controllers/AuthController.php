@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -47,5 +48,15 @@ class AuthController extends Controller
             'user' => $user,
             'jwt' => $token,
         ])->withCookie($cookie);
+    }
+
+
+    public function logout(Request $request): JsonResponse
+    {      
+        $cookie = Cookie::forget('jwt');
+
+        $request->user()->tokens()->delete();
+
+        return response()->json(['message' => self::SUCCESS])->withCookie($cookie);
     }
 }

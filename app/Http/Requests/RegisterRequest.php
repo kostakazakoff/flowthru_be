@@ -43,7 +43,9 @@ class RegisterRequest extends FormRequest
         return [
             'email.required' => 'Email is required!',
             'email.unique' => 'This email is already in use.',
-            'email.email' => 'Invalid email address'
+            'email.email' => 'Invalid email address.',
+            'password.required' => 'Password is required!',
+            'password.min' => 'The password field must be at least 4 characters long.',
         ];
     }
 }
