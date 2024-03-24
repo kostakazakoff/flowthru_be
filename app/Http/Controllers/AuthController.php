@@ -39,7 +39,7 @@ class AuthController extends Controller
 
         $user = $request->user();
 
-        $token = $user->createToken('token')->plainTextToken;
+        $token = $user->createToken('token', ['*'], now()->addDay())->plainTextToken;
 
         $cookie = cookie('jwt', $token, 8 * 60);
 
