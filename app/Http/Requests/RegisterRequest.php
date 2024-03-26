@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\Auth;
 
 class RegisterRequest extends FormRequest
 {
+    protected $password;
+    protected $password2;
+
+    
+    public function __construct(FormRequest $request){
+        $this->password = $request->password;
+        $this->password2 = $request->password2;
+    }
+
+
     public function authorize(): bool
     {
         return true;
@@ -23,6 +33,7 @@ class RegisterRequest extends FormRequest
         return [
             'email' => 'required|unique:users|email',
             'password' => 'required|min:4',
+            'password2' => 'required|same:password',
         ];
     }
 
@@ -32,7 +43,7 @@ class RegisterRequest extends FormRequest
         $result = [
             'success'   => false,
             'message'   => 'Validation errors',
-            'data'      => $validator->errors()
+            'errors'      => $validator->errors()
         ];
         throw new HttpResponseException(response()->json($result));
     }
@@ -46,6 +57,8 @@ class RegisterRequest extends FormRequest
             'email.email' => 'Invalid email address.',
             'password.required' => 'Password is required!',
             'password.min' => 'The password field must be at least 4 characters long.',
+            'password2.required' => 'Password confirmation is required!',
+            'password2.same' => 'Passwords didn\'t match!',
         ];
     }
 }

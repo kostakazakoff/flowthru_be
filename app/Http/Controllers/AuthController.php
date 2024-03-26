@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    const SUCCESS = 'success';
-
-
     public function register(RegisterRequest $request): JsonResponse
     {
         $user = User::create([
@@ -24,7 +21,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        return response()->json(['message' => self::SUCCESS, 'user' => $user]);
+        return response()->json(['success' => true, 'user' => $user]);
     }
 
 
@@ -39,12 +36,12 @@ class AuthController extends Controller
 
         $user = $request->user();
 
-        $token = $user->createToken('token')->plainTextToken;
+        $token = $user->createToken('token', ['*'], now()->addDay())->plainTextToken;
 
-        $cookie = cookie('jwt', $token, 8 * 60, httpOnly: true);
+        $cookie = cookie('jwt', $token, 8 * 60);
 
         return response()->json([
-            'message' => self::SUCCESS,
+            'success' => true,
             'user' => $user,
             'jwt' => $token,
         ])->withCookie($cookie);
@@ -52,11 +49,11 @@ class AuthController extends Controller
 
 
     public function logout(Request $request): JsonResponse
-    {      
+    {
         $cookie = Cookie::forget('jwt');
 
         $request->user()->tokens()->delete();
 
-        return response()->json(['message' => self::SUCCESS])->withCookie($cookie);
+        return response()->json(['success' => true])->withCookie($cookie);
     }
 }
